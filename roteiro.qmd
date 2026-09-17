@@ -1,0 +1,672 @@
+---
+title: "Roteiro prático"
+subtitle: "Bash sem aperreio"
+author: "Allysson Allan de Farias"
+date: "2026"
+toc: true
+toc-depth: 3
+number-sections: true
+page-layout: article
+---
+
+# Bash sem aperreio
+
+## Roteiro prático de duas horas para bioinformática
+
+Adaptação em português brasileiro, com pitadas de cearencês, do tutorial [Basic Bare Bones Bash](https://barebonesbash.github.io/#/bbb1/basic_barebonesbash_walkthrough), de James A. Fellows Yates e Thiseas C. Lamnidis.
+
+Este material é uma obra adaptada distribuída sob a licença [Creative Commons Atribuição CompartilhaIgual 4.0 Internacional](https://creativecommons.org/licenses/by-sa/4.0/). Os comandos foram preservados, mas o percurso foi condensado e alguns exemplos foram substituídos para caber em uma aula prática de 120 minutos.
+
+> **Bora começar?** Bash parece um cabra sisudo no primeiro encontro, mas, depois que a gente entende o caminho, ele resolve serviço num instante.
+
+## Objetivos da aula
+
+Ao final da prática, a turma deverá conseguir:
+
+1. reconhecer terminal, shell, prompt e diretório de trabalho;
+2. navegar pela estrutura de diretórios;
+3. criar, copiar, mover, renomear e remover arquivos e diretórios;
+4. inspecionar arquivos de texto e arquivos compactados;
+5. consultar a documentação dos comandos;
+6. combinar comandos com pipes e redirecionamentos;
+7. criar links simbólicos;
+8. usar variáveis, curingas e laços `for` em uma tarefa simples de bioinformática.
+
+## Cronograma de 120 minutos
+
+| Tempo | Tema | Resultado prático |
+|---:|---|---|
+| 0 a 10 min | Terminal, shell, Bash e prompt | Abrir o terminal e executar o primeiro comando |
+| 10 a 30 min | Navegação e caminhos | Localizar, criar e acessar diretórios |
+| 30 a 50 min | Arquivos e segurança | Criar, copiar, mover e remover arquivos |
+| 50 a 70 min | FASTQ e inspeção de texto | Ler um FASTQ pequeno e compactado |
+| 70 a 90 min | Ajuda, pipes e redirecionamentos | Construir uma sequência de comandos |
+| 90 a 105 min | Links e variáveis | Organizar dados sem criar duplicatas |
+| 105 a 118 min | Curingas e laço `for` | Automatizar a inspeção de vários FASTQ |
+| 118 a 120 min | Fechamento | Revisar o mapa mental da aula |
+
+## Antes da aula
+
+O roteiro foi pensado para Linux, macOS ou Windows com WSL. Confirme se os seguintes comandos estão disponíveis:
+
+```bash
+bash --version
+pwd
+ls
+gzip --version
+```
+
+No macOS, algumas opções podem produzir resultados ligeiramente diferentes. Isso não é erro, é variação entre implementações dos programas.
+
+## Combinados de segurança
+
+O terminal executa exatamente o que foi digitado. Antes de pressionar `Enter`, confira o comando e o diretório em que você está.
+
+Neste roteiro:
+
+* o símbolo `$` representa o prompt e não deve ser copiado;
+* os trechos entre `<` e `>` representam valores que devem ser substituídos;
+* tudo o que aparece depois de `#` é comentário;
+* caminhos devem ser colocados entre aspas quando contêm espaços;
+* `rm` remove arquivos sem passar pela lixeira;
+* nunca execute um comando destrutivo sem conferir o resultado de `pwd` e `ls`.
+
+> **Regra do “égua, peraí”**: apareceu `rm`, `sudo` ou um curinga `*`? Pare um instante e confira o alvo.
+
+## Referência rápida
+
+| Comando | Para que serve | Exemplo |
+|---|---|---|
+| `pwd` | mostra o diretório atual | `pwd` |
+| `ls` | lista o conteúdo de um diretório | `ls -lah` |
+| `cd` | muda de diretório | `cd ~/aula_bash` |
+| `mkdir` | cria diretório | `mkdir dados` |
+| `touch` | cria arquivo vazio ou atualiza sua data | `touch notas.txt` |
+| `cp` | copia arquivos ou diretórios | `cp origem.txt copia.txt` |
+| `mv` | move ou renomeia | `mv antigo.txt novo.txt` |
+| `rmdir` | remove diretório vazio | `rmdir pasta_vazia` |
+| `rm` | remove arquivos | `rm arquivo.txt` |
+| `cat` | exibe ou concatena texto | `cat amostra.fastq` |
+| `head` | mostra o começo | `head -n 4 amostra.fastq` |
+| `tail` | mostra o final | `tail -n 4 amostra.fastq` |
+| `less` | permite percorrer um texto | `less arquivo.txt` |
+| `wc` | conta linhas, palavras ou bytes | `wc -l arquivo.txt` |
+| `grep` | procura padrões | `grep '^@' amostra.fastq` |
+| `gzip` | compacta um arquivo | `gzip amostra.fastq` |
+| `zcat` | exibe texto compactado | `zcat amostra.fastq.gz` |
+| `man` | abre o manual | `man grep` |
+| `ln -s` | cria um link simbólico | `ln -s alvo link` |
+| `echo` | imprime texto ou variável | `echo "$HOME"` |
+| `for` | repete comandos | `for arq in *.gz; do ...; done` |
+
+## 1. O que são terminal, shell e Bash?
+
+O terminal é a janela em que digitamos comandos. A shell interpreta o que digitamos e conversa com o sistema operacional. Bash, abreviação de *Bourne Again Shell*, é uma das shells mais usadas.
+
+Um prompt pode aparecer assim:
+
+```text
+usuario@computador:~$
+```
+
+Ele informa quem está usando a máquina, qual é a máquina e onde a pessoa está. O símbolo `$` indica que o terminal aguarda um comando.
+
+Execute:
+
+```bash
+echo "Alô, mundo!"
+```
+
+> **Oxente, foi ligeiro.** O computador apenas repetiu o texto. Ainda assim, esse é o começo de programas, registros de análise e pipelines inteiros.
+
+### Exercício relâmpago
+
+Peça ao Bash para imprimir seu nome e sua área de pesquisa.
+
+```bash
+echo "Meu nome é <seu_nome> e eu trabalho com <sua_area>."
+```
+
+## 2. Onde estou?
+
+O sistema de arquivos é organizado como uma árvore. O diretório raiz é representado por `/`. O diretório pessoal do usuário, chamado *home*, pode ser representado por `~`.
+
+Descubra onde você está:
+
+```bash
+pwd
+```
+
+Liste o conteúdo do diretório atual:
+
+```bash
+ls
+ls -l
+ls -lah
+```
+
+Em `ls -lah`, `l` solicita detalhes, `a` inclui itens ocultos e `h` apresenta tamanhos legíveis para humanos.
+
+### Caminho absoluto e caminho relativo
+
+Um caminho absoluto começa em `/` ou usa `~` como atalho para o diretório pessoal.
+
+```text
+/home/ana/projeto/dados
+~/projeto/dados
+```
+
+Um caminho relativo parte do diretório atual.
+
+```text
+dados
+./dados
+../outro_projeto
+```
+
+O ponto `.` significa “diretório atual”. Dois pontos `..` significam “diretório acima”.
+
+### Analogia cearense
+
+Um caminho absoluto é como explicar a rota inteira a partir da Praça do Ferreira. Um caminho relativo é dizer “dobre na próxima rua”, considerando onde a pessoa já está. Se você não sabe de onde partiu, a orientação relativa vira aperreio.
+
+## 3. Criando o espaço da aula
+
+Crie um diretório isolado no seu diretório pessoal:
+
+```bash
+mkdir -p ~/aula_bash/dados
+mkdir -p ~/aula_bash/resultados
+cd ~/aula_bash
+pwd
+ls -lah
+```
+
+O argumento `-p` cria também os diretórios intermediários necessários e evita erro caso o diretório já exista.
+
+Entre em `dados` e volte:
+
+```bash
+cd dados
+pwd
+cd ..
+pwd
+```
+
+Alterne entre o diretório atual e o anterior:
+
+```bash
+cd dados
+cd -
+cd -
+```
+
+Use `Tab` para completar nomes. Use as setas para cima e para baixo para recuperar comandos anteriores.
+
+### Desafio de 2 minutos
+
+Sem copiar os comandos anteriores, faça o seguinte:
+
+1. entre em `resultados`;
+2. confirme o caminho;
+3. volte para `~/aula_bash` usando um caminho relativo;
+4. liste o conteúdo.
+
+Uma solução possível:
+
+```bash
+cd resultados
+pwd
+cd ..
+ls
+```
+
+## 4. Criando e manipulando arquivos
+
+Crie dois arquivos vazios:
+
+```bash
+touch notas.txt
+touch dados/amostras.tsv
+ls -lah
+ls -lah dados
+```
+
+Renomeie `notas.txt`:
+
+```bash
+mv notas.txt diario_de_bordo.txt
+```
+
+Copie o arquivo:
+
+```bash
+cp diario_de_bordo.txt resultados/diario_de_bordo_copia.txt
+```
+
+Confira antes de remover a cópia:
+
+```bash
+ls -l resultados
+rm resultados/diario_de_bordo_copia.txt
+ls -l resultados
+```
+
+`mv` move um objeto e também permite renomear. `cp` cria outra cópia dos dados. `rm` remove o objeto indicado.
+
+### Por que `rmdir` e `rm` são diferentes?
+
+`rmdir` remove apenas diretórios vazios. Essa restrição funciona como uma proteção. `rm -r` percorre um diretório e remove seu conteúdo, por isso exige mais atenção.
+
+```bash
+mkdir pasta_vazia
+rmdir pasta_vazia
+```
+
+Não usaremos `rm -r` durante os exercícios principais.
+
+> **Sem valentia desnecessária:** quem usa `rm -rf` sem conferir o caminho pode transformar uma aula tranquila num aperreio danado.
+
+## 5. Um FASTQ pequeno para a prática
+
+Para que toda a turma trabalhe com os mesmos dados sem depender da rede, criaremos um arquivo didático com duas leituras.
+
+Copie o bloco completo:
+
+```bash
+printf '@leitura_1\nACGTTGCA\n+\nFFFFFFFF\n@leitura_2\nGGCATGCA\n+\nHHHHHHHH\n' > dados/amostra_A.fastq
+```
+
+Confira o arquivo:
+
+```bash
+cat dados/amostra_A.fastq
+```
+
+Cada registro FASTQ ocupa quatro linhas:
+
+1. identificador iniciado por `@`;
+2. sequência;
+3. separador iniciado por `+`;
+4. caracteres de qualidade.
+
+Mostre apenas o primeiro registro:
+
+```bash
+head -n 4 dados/amostra_A.fastq
+```
+
+Mostre o último registro:
+
+```bash
+tail -n 4 dados/amostra_A.fastq
+```
+
+Conte as linhas:
+
+```bash
+wc -l dados/amostra_A.fastq
+```
+
+Como cada leitura ocupa quatro linhas, uma estimativa simples do número de leituras é:
+
+```bash
+echo $(( $(wc -l < dados/amostra_A.fastq) / 4 ))
+```
+
+Para arquivos reais, é prudente verificar se o formato está íntegro em vez de depender apenas dessa divisão.
+
+### Compactação
+
+Faça uma cópia e compacte a cópia:
+
+```bash
+cp dados/amostra_A.fastq dados/amostra_B.fastq
+gzip dados/amostra_B.fastq
+ls -lh dados
+```
+
+O arquivo original da amostra B foi substituído por `amostra_B.fastq.gz`.
+
+Leia sem descompactar no disco:
+
+```bash
+zcat dados/amostra_B.fastq.gz
+```
+
+No macOS, se `zcat` não aceitar arquivos `.gz`, use:
+
+```bash
+gzcat dados/amostra_B.fastq.gz
+```
+
+## 6. Pedindo ajuda ao computador
+
+Não é preciso decorar todas as opções. A documentação faz parte do trabalho no terminal.
+
+```bash
+man wc
+```
+
+Dentro do manual, use as setas para navegar, `/palavra` para procurar e `q` para sair.
+
+Alguns programas fornecem uma ajuda mais curta:
+
+```bash
+wc --help
+grep --help
+```
+
+Em sistemas nos quais `--help` não está disponível, consulte `man`.
+
+Descubra a função de um comando:
+
+```bash
+whatis grep
+```
+
+### Pergunta para a turma
+
+Qual opção de `wc` conta bytes? Qual conta caracteres? Consulte o manual e teste no FASTQ.
+
+## 7. Pipes: um comando entrega o resultado ao próximo
+
+O pipe, representado por `|`, conecta a saída de um comando à entrada do seguinte.
+
+```bash
+cat dados/amostra_A.fastq | head -n 4
+```
+
+Nesse exemplo, `cat` envia o arquivo para `head`. Como `head` aceita um arquivo diretamente, a forma abaixo é mais curta:
+
+```bash
+head -n 4 dados/amostra_A.fastq
+```
+
+O pipe se torna mais interessante quando encadeamos transformações. Conte os identificadores de leitura:
+
+```bash
+grep '^@' dados/amostra_A.fastq | wc -l
+```
+
+Leia o arquivo compactado, selecione os identificadores e conte os resultados:
+
+```bash
+zcat dados/amostra_B.fastq.gz | grep '^@' | wc -l
+```
+
+O símbolo `^` significa “início da linha” nessa expressão usada por `grep`.
+
+### Redirecionamento
+
+O símbolo `>` envia a saída para um arquivo e substitui seu conteúdo anterior.
+
+```bash
+grep '^@' dados/amostra_A.fastq > resultados/identificadores.txt
+cat resultados/identificadores.txt
+```
+
+O símbolo `>>` acrescenta conteúdo ao final:
+
+```bash
+echo "Análise realizada por $USER" >> resultados/identificadores.txt
+tail -n 1 resultados/identificadores.txt
+```
+
+> **O pulo do gato:** `|` entrega dados a outro programa, `>` grava do zero e `>>` acrescenta. Confundir `>` com `>>` pode apagar o conteúdo anterior.
+
+## 8. Procurando texto com `grep`
+
+Procure a sequência `TGCA`:
+
+```bash
+grep 'TGCA' dados/amostra_A.fastq
+```
+
+Mostre o número das linhas encontradas:
+
+```bash
+grep -n 'TGCA' dados/amostra_A.fastq
+```
+
+Conte quantas linhas começam com `@`:
+
+```bash
+grep -c '^@' dados/amostra_A.fastq
+```
+
+Esse exemplo é didático. Em um FASTQ real, uma linha de qualidade também pode começar com `@`. Ferramentas específicas são preferíveis para validação e estatísticas robustas.
+
+## 9. Links simbólicos: atalhos sem duplicar os dados
+
+Um link simbólico aponta para outro arquivo. Ele ocupa pouco espaço e permite organizar uma análise sem copiar arquivos grandes.
+
+```bash
+ln -s ~/aula_bash/dados/amostra_A.fastq ~/aula_bash/resultados/amostra_A.fastq
+ls -l resultados
+head -n 4 resultados/amostra_A.fastq
+```
+
+Se o arquivo original for removido ou mudar de lugar, o link deixa de funcionar.
+
+Remover o link não remove o arquivo original:
+
+```bash
+rm resultados/amostra_A.fastq
+ls dados/amostra_A.fastq
+```
+
+> **É só um apontador, visse?** O link diz onde está o arquivo. Ele não carrega uma segunda mala de dados nas costas.
+
+## 10. Variáveis
+
+Uma variável associa um nome a um valor.
+
+```bash
+projeto="aula_bash"
+echo "$projeto"
+```
+
+Não use espaços ao redor de `=` na atribuição.
+
+Variáveis do ambiente já existem quando a shell é iniciada:
+
+```bash
+echo "$HOME"
+echo "$USER"
+echo "$SHELL"
+```
+
+As aspas duplas preservam o valor como uma única unidade e ainda permitem a expansão da variável.
+
+Use uma variável para guardar o diretório da aula:
+
+```bash
+dir_aula="$HOME/aula_bash"
+echo "$dir_aula"
+ls "$dir_aula/dados"
+```
+
+Nomes criados pelo usuário devem evitar variáveis conhecidas em letras maiúsculas, como `HOME`, `PATH` e `USER`.
+
+## 11. Curingas
+
+O asterisco `*` representa zero ou mais caracteres.
+
+```bash
+ls dados/*.fastq
+ls dados/*.gz
+ls dados/amostra_*
+```
+
+O ponto de interrogação `?` representa exatamente um caractere.
+
+```bash
+ls dados/amostra_?.fastq
+```
+
+Antes de combinar curingas com `rm`, visualize os alvos usando `printf`, `ls` ou um laço de teste.
+
+```bash
+printf '%s\n' dados/*.fastq
+```
+
+## 12. Laço `for`: automatizando sem aperreio
+
+Crie mais uma amostra:
+
+```bash
+cp dados/amostra_A.fastq dados/amostra_C.fastq
+```
+
+Primeiro, faça um ensaio que apenas mostra os arquivos:
+
+```bash
+for fastq in dados/*.fastq; do
+  echo "Vou analisar: $fastq"
+done
+```
+
+Agora conte as linhas de cada FASTQ:
+
+```bash
+for fastq in dados/*.fastq; do
+  linhas=$(wc -l < "$fastq")
+  leituras=$(( linhas / 4 ))
+  echo "$fastq tem $leituras leituras"
+done
+```
+
+O laço segue esta estrutura:
+
+```bash
+for item in lista; do
+  comando "$item"
+done
+```
+
+`item` recebe um valor da lista por vez. O bloco entre `do` e `done` é repetido para cada valor.
+
+### Desafio final
+
+Crie um arquivo tabular com o nome de cada FASTQ não compactado e sua quantidade de linhas.
+
+Saída esperada:
+
+```text
+arquivo	linhas
+dados/amostra_A.fastq	8
+dados/amostra_C.fastq	8
+```
+
+Uma solução possível:
+
+```bash
+echo -e 'arquivo\tlinhas' > resultados/resumo.tsv
+
+for fastq in dados/*.fastq; do
+  linhas=$(wc -l < "$fastq")
+  echo -e "$fastq\t$linhas" >> resultados/resumo.tsv
+done
+
+column -t -s $'\t' resultados/resumo.tsv
+```
+
+Se `column` não estiver disponível, visualize com:
+
+```bash
+cat resultados/resumo.tsv
+```
+
+## 13. Exemplo opcional com dados públicos
+
+Se houver rede estável e tempo, baixe o FASTQ usado no tutorial original a partir do European Nucleotide Archive:
+
+```bash
+cd ~/aula_bash/dados
+wget https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR202/001/ERR2020601/ERR2020601.fastq.gz
+```
+
+Se `wget` não estiver disponível:
+
+```bash
+curl -O https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR202/001/ERR2020601/ERR2020601.fastq.gz
+```
+
+Evite fazer esse download simultaneamente em muitas máquinas durante a aula. O FASTQ didático já cobre todos os objetivos principais.
+
+## 14. Revisão: o caminho das pedras
+
+O fluxo mental da aula pode ser resumido assim:
+
+```text
+Onde estou?        pwd
+O que há aqui?     ls
+Para onde vou?     cd
+Preciso criar?     mkdir, touch
+Preciso copiar?    cp
+Preciso mover?     mv
+Preciso ler?       cat, head, tail, less, zcat
+Preciso procurar?  grep
+Preciso contar?    wc
+Preciso combinar?  |
+Preciso gravar?    > ou >>
+Preciso apontar?   ln -s
+Preciso repetir?   for
+```
+
+### Saída rápida
+
+Peça a cada estudante que responda no terminal:
+
+```bash
+echo "Um comando que aprendi: <comando>"
+echo "Uma dúvida que ficou: <dúvida>"
+echo "Uma tarefa que consigo automatizar: <tarefa>"
+```
+
+## 15. Limpeza opcional
+
+Faça a limpeza somente depois de confirmar o caminho e o conteúdo:
+
+```bash
+cd ~
+pwd
+ls -ld ~/aula_bash
+```
+
+Se a intenção for realmente apagar todo o material da prática:
+
+```bash
+rm -r ~/aula_bash
+```
+
+Esse comando remove o diretório e todo o seu conteúdo. Para preservar os exercícios, não o execute.
+
+## Notas para quem ministra a aula
+
+### Pontos para demonstrar ao vivo
+
+Digite alguns comandos lentamente. Mostre um erro de caminho, leia a mensagem com a turma e corrija o comando. Isso ajuda a normalizar o erro como fonte de informação.
+
+Ao apresentar `rm`, primeiro use `ls` com o mesmo caminho. Ao apresentar curingas, use `printf '%s\n' padrão*` antes de qualquer operação. Ao apresentar o laço, comece com `echo` e só depois execute a tarefa real.
+
+### Onde cortar se o tempo apertar
+
+Se a turma tiver pouca familiaridade com terminal, deixe links simbólicos e o download do ENA como leitura complementar. Preserve navegação, pipes, redirecionamento, variáveis e o laço final.
+
+### Onde expandir se a turma avançar rápido
+
+Mostre `history`, busca reversa com `Ctrl+R`, permissões com `ls -l`, execução de scripts com `bash script.sh`, substituição de comando com `$(...)` e tratamento básico de erros com `set -euo pipefail`.
+
+### Sugestão de encerramento cearense
+
+> Pronto, minha gente. Se vocês sabem onde estão, conferem antes de apagar e fazem o computador repetir o serviço pesado, já começaram no Bash do jeito certo. O resto vem com prática, sem aperreio.
+
+## Créditos e licença
+
+Material fonte: James A. Fellows Yates e Thiseas C. Lamnidis, [Bare Bones Bash](https://github.com/BareBonesBash/barebonesbash.github.io), consultado em setembro de 2026.
+
+Adaptação para português brasileiro e aula de duas horas: Allysson Allan de Farias, com apoio do ChatGPT.
+
+Licença: [CC BY SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Ao reutilizar ou modificar este roteiro, mantenha a atribuição e distribua a adaptação sob a mesma licença.

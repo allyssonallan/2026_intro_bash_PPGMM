@@ -1,0 +1,39 @@
+project:
+  type: website
+  output-dir: _site
+
+lang: pt-BR
+
+website:
+  title: "Bash sem aperreio"
+  description: "Introdução prática ao Bash para bioinformática"
+  favicon: assets/BareBonesBash_Icon.png
+  site-url: https://allyssonallan.github.io/2026_intro_bash_PPGMM/
+  repo-url: https://github.com/allyssonallan/2026_intro_bash_PPGMM
+  repo-actions: [source, issue]
+  navbar:
+    background: light
+    logo: assets/BareBonesBash_Icon.png
+    left:
+      - href: index.qmd
+        text: Início
+      - href: roteiro.qmd
+        text: Roteiro
+      - href: slides.qmd
+        text: Apresentação
+  page-footer:
+    left: "Material adaptado de Bare Bones Bash, CC BY-SA 4.0"
+    right: "PPGMM · 2026"
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    code-copy: true
+    code-overflow: wrap
+    link-external-newwindow: true
+
+execute:
+  freeze: auto
+

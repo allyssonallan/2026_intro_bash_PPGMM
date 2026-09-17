@@ -1,0 +1,81 @@
+/*-- scss:defaults --*/
+$body-bg: #ffffff;
+$body-color: #19171c;
+$link-color: #6a3d9a;
+$presentation-heading-color: #7570b3;
+$presentation-heading-font: Georgia, "Times New Roman", serif;
+$font-family-sans-serif: Arial, Helvetica, sans-serif;
+$font-family-monospace: "DejaVu Sans Mono", "Liberation Mono", monospace;
+$code-block-bg: #f4f2f7;
+$code-block-border-color: transparent;
+$presentation-font-size-root: 30px;
+
+/*-- scss:rules --*/
+.reveal .slides section {
+  border-top: 0.35rem solid #7570b3;
+  padding-top: 1rem;
+}
+
+.reveal h1,
+.reveal h2 {
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.reveal pre {
+  width: 100%;
+  border-radius: 0.65rem;
+  box-shadow: none;
+}
+
+.reveal pre code {
+  max-height: 31rem;
+  padding: 1.1rem 1.3rem;
+  font-size: 0.88em;
+  line-height: 1.35;
+}
+
+.reveal .purple {
+  color: #6a3d9a;
+}
+
+.reveal .muted {
+  color: #6f6b73;
+}
+
+.reveal .callout-note {
+  border-left-color: #7570b3;
+}
+
+.reveal .columns {
+  align-items: center;
+}
+
+.reveal .slide-logo {
+  right: 1.1rem !important;
+  bottom: 1rem !important;
+  max-height: 3.3rem !important;
+}
+
+.reveal .progress {
+  height: 0.25rem;
+  color: #6a3d9a;
+}
+
+.reveal .footer {
+  color: #6f6b73;
+  font-size: 0.46em;
+}
+
+.centered {
+  text-align: center;
+}
+
+.big-code pre code {
+  font-size: 1.2em;
+}
+
+.small-code pre code {
+  font-size: 0.7em;
+}
+

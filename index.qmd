@@ -1,0 +1,51 @@
+---
+title: "Bash sem aperreio"
+subtitle: "Introdução prática ao terminal para bioinformática"
+author: "Allysson Allan de Farias"
+page-layout: full
+toc: false
+title-block-style: none
+---
+
+::: {.hero}
+::: {.hero-mark}
+![](assets/BareBonesBash_Icon.png){fig-alt="Ícone do Bare Bones Bash"}
+:::
+
+# Bash sem aperreio
+
+Uma aula prática de duas horas para aprender a navegar, manipular arquivos e automatizar tarefas de bioinformática no terminal.
+
+::: {.hero-actions}
+[Abrir o roteiro](roteiro.qmd){.btn .btn-primary .btn-lg}
+[Ver a apresentação](slides.qmd){.btn .btn-outline-primary .btn-lg}
+:::
+:::
+
+::: {.content-grid}
+::: {.content-card}
+## Roteiro prático
+
+Comandos explicados passo a passo, exercícios e um FASTQ didático que não depende de acesso à internet.
+
+[Acessar o roteiro](roteiro.qmd)
+:::
+
+::: {.content-card}
+## Apresentação
+
+Slides em Reveal.js com o estilo minimalista do Bare Bones Bash e notas para uma aula de 120 minutos.
+
+[Abrir em tela cheia](slides.qmd)
+:::
+
+::: {.content-card}
+## Conteúdo
+
+Navegação, arquivos, compactação, ajuda, pipes, `grep`, redirecionamento, links simbólicos, variáveis, curingas e laços `for`.
+:::
+:::
+
+::: {.license-note}
+Este material adapta o tutorial [Bare Bones Bash](https://barebonesbash.github.io/#/bbb1/basic_barebonesbash_walkthrough), de James A. Fellows Yates e Thiseas C. Lamnidis, sob a licença [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+:::
