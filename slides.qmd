@@ -457,7 +457,7 @@ Sem espaços ao redor de `=`. Use aspas em caminhos.
 Compare echo HOME com echo $HOME. Tempo sugerido: 5 minutos.
 :::
 
-## Curingas
+## Asteriscos
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -481,13 +481,13 @@ ls dados/amostra_?.fastq
 :::
 ::::
 
-Visualize os alvos antes de combinar curinga e `rm`.
+Visualize os alvos antes de combinar asteriscos e `rm`.
 
 ::: {.notes}
-Teste os curingas e use printf para visualizar a expansão. Tempo sugerido: 4 minutos.
+Teste os asteriscos e use printf para visualizar a expansão. Tempo sugerido: 4 minutos.
 :::
 
-## Laço `for`
+## Loop `for`
 
 ```bash
 for fastq in dados/*.fastq; do

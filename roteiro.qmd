@@ -30,9 +30,9 @@ Ao final da prática, a turma deverá conseguir:
 5. consultar a documentação dos comandos;
 6. combinar comandos com pipes e redirecionamentos;
 7. criar links simbólicos;
-8. usar variáveis, curingas e laços `for` em uma tarefa simples de bioinformática.
+8. usar variáveis, asteriscos e loops `for` em uma tarefa simples de bioinformática.
 
-## Cronograma de 120 minutos
+## Cronograma
 
 | Tempo | Tema | Resultado prático |
 |---:|---|---|
@@ -42,7 +42,7 @@ Ao final da prática, a turma deverá conseguir:
 | 50 a 70 min | FASTQ e inspeção de texto | Ler um FASTQ pequeno e compactado |
 | 70 a 90 min | Ajuda, pipes e redirecionamentos | Construir uma sequência de comandos |
 | 90 a 105 min | Links e variáveis | Organizar dados sem criar duplicatas |
-| 105 a 118 min | Curingas e laço `for` | Automatizar a inspeção de vários FASTQ |
+| 105 a 118 min | Asteriscos e loop `for` | Automatizar a inspeção de vários FASTQ |
 | 118 a 120 min | Fechamento | Revisar o mapa mental da aula |
 
 ## Antes da aula
@@ -71,7 +71,7 @@ Neste roteiro:
 * `rm` remove arquivos sem passar pela lixeira;
 * nunca execute um comando destrutivo sem conferir o resultado de `pwd` e `ls`.
 
-> **Regra do “égua, peraí”**: apareceu `rm`, `sudo` ou um curinga `*`? Pare um instante e confira o alvo.
+> **Regra do “égua, peraí”**: apareceu `rm`, `sudo` ou um asterisco `*`? Pare um instante e confira o comando.
 
 ## Referência rápida
 
@@ -117,7 +117,7 @@ Execute:
 echo "Alô, mundo!"
 ```
 
-> **Oxente, foi ligeiro.** O computador apenas repetiu o texto. Ainda assim, esse é o começo de programas, registros de análise e pipelines inteiros.
+> **Mah, foi ligeiro.** O computador apenas repetiu o texto. Ainda assim, esse é o começo de programas, registros de análise e pipelines inteiros.
 
 ### Exercício relâmpago
 
@@ -435,7 +435,7 @@ Conte quantas linhas começam com `@`:
 grep -c '^@' dados/amostra_A.fastq
 ```
 
-Esse exemplo é didático. Em um FASTQ real, uma linha de qualidade também pode começar com `@`. Ferramentas específicas são preferíveis para validação e estatísticas robustas.
+Esse exemplo é didático. Em um FASTQ real, uma linha de qualidade também pode começar com `@`. Ferramentas específicas (ex. `bcftools`) são preferíveis para validação e estatísticas robustas.
 
 ## 9. Links simbólicos: atalhos sem duplicar os dados
 
@@ -489,7 +489,7 @@ ls "$dir_aula/dados"
 
 Nomes criados pelo usuário devem evitar variáveis conhecidas em letras maiúsculas, como `HOME`, `PATH` e `USER`.
 
-## 11. Curingas
+## 11. Asteriscos
 
 O asterisco `*` representa zero ou mais caracteres.
 
@@ -505,13 +505,13 @@ O ponto de interrogação `?` representa exatamente um caractere.
 ls dados/amostra_?.fastq
 ```
 
-Antes de combinar curingas com `rm`, visualize os alvos usando `printf`, `ls` ou um laço de teste.
+Antes de combinar asteriscos com `rm`, visualize os alvos usando `printf`, `ls` ou um loop de teste.
 
 ```bash
 printf '%s\n' dados/*.fastq
 ```
 
-## 12. Laço `for`: automatizando sem aperreio
+## 12. Loop `for`: automatizando sem aperreio
 
 Crie mais uma amostra:
 
@@ -649,7 +649,7 @@ Esse comando remove o diretório e todo o seu conteúdo. Para preservar os exerc
 
 Digite alguns comandos lentamente. Mostre um erro de caminho, leia a mensagem com a turma e corrija o comando. Isso ajuda a normalizar o erro como fonte de informação.
 
-Ao apresentar `rm`, primeiro use `ls` com o mesmo caminho. Ao apresentar curingas, use `printf '%s\n' padrão*` antes de qualquer operação. Ao apresentar o laço, comece com `echo` e só depois execute a tarefa real.
+Ao apresentar `rm`, primeiro use `ls` com o mesmo caminho. Ao apresentar asteriscos, use `printf '%s\n' padrão*` antes de qualquer operação. Ao apresentar o loop, comece com `echo` e só depois execute a tarefa real.
 
 ### Onde cortar se o tempo apertar
 
