@@ -2,7 +2,7 @@
 title: "Bash sem aperreio"
 subtitle: "Introdução prática ao terminal para bioinformática"
 author: "Allysson Allan de Farias"
-date: "2026"
+date: "2026-09-17"
 format:
   revealjs:
     theme: [default, slides.scss]
@@ -23,7 +23,7 @@ format:
     preview-links: auto
 ---
 
-## A aula em 120 minutos
+## A aula
 
 :::: {.columns}
 ::: {.column width="50%"}
@@ -74,7 +74,7 @@ Uma shell comum em Linux e macOS.
 ::::
 
 ```bash
-echo "Alô, mundo!"
+echo "Alô, mundo"
 ```
 
 ::: {.notes}
@@ -118,7 +118,7 @@ Mostre prompts diferentes e explique o papel do cifrão. Tempo sugerido: 3 minut
 
 ::: {.big-code}
 ```bash
-# O Bash ignora tudo depois do cerquilha
+# O Bash ignora tudo depois do hashtag
 pwd   # mostra o diretório atual
 ```
 :::
@@ -126,7 +126,7 @@ pwd   # mostra o diretório atual
 Comentários explicam decisões e deixam o histórico compreensível.
 
 ::: {.notes}
-Digite uma linha iniciada por cerquilha. Tempo sugerido: 2 minutos.
+Digite uma linha iniciada por hashtag. Tempo sugerido: 2 minutos.
 :::
 
 ## Onde estou?
@@ -331,6 +331,16 @@ A turma executa os cinco comandos. Demonstre busca e saída no less. Tempo suger
 ## Arquivos compactados
 
 ```bash
+cat > dados/amostra_B.fastq <<'EOF'
+@leitura_1
+ACGAAGCA
++
+FFFFFFFF
+@leitura_2
+GGCATCGT
++
+HHHHHHHH
+EOF
 gzip dados/amostra_B.fastq
 zcat dados/amostra_B.fastq.gz | head
 ```
